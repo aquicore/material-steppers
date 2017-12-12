@@ -69,6 +69,16 @@ class StepperCtrl {
     }
 
     /**
+     * Unregister component step to this stepper.
+     *
+     * @param {StepCtrl} step The step to add.
+     * @returns number - The step number.
+     */
+    $removeStep(step: StepCtrl) {
+        this.steps.splice(step.stepNumber, 1);
+    }
+
+    /**
      * Complete the current step and move one to the next.
      * Using this method on editable steps (in linear stepper)
      * it will search by the next step without "completed" state to move.
@@ -234,6 +244,10 @@ class StepCtrl {
     $postLink() {
         const index = this.stepIndex ? parseInt(this.stepIndex) : null;
         this.stepNumber = this.$stepper.$addStep(this, index);
+    }
+
+    $onDestroy() {
+        this.$stepper.$removeStep(this);
     }
 
     isActive() {
