@@ -37,6 +37,9 @@ var StepperCtrl = (function () {
     StepperCtrl.prototype.$addStep = function (step, stepIndex) {
         if (stepIndex) {
             this.steps.splice(stepIndex, 0, step);
+            this.steps.forEach(function (s, index) {
+                this.steps[index].stepNumber = index;
+            });
         }
         else {
             return this.steps.push(step) - 1;
