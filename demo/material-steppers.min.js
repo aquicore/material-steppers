@@ -33,7 +33,6 @@ var StepperCtrl = (function () {
      * Register component step to this stepper.
      *
      * @param {StepCtrl} step The step to add.
-     * @returns number - The step number.
      */
     StepperCtrl.prototype.$addStep = function (step, stepIndex) {
         if (stepIndex) {
@@ -42,6 +41,15 @@ var StepperCtrl = (function () {
         else {
             return this.steps.push(step) - 1;
         }
+    };
+    /**
+     * Unregister component step from this stepper.
+     *
+     * @param {StepCtrl} step The step to remove.
+     * @returns number - The step number.
+     */
+    StepperCtrl.prototype.$removeStep = function (step) {
+        this.steps.splice(step.stepNumber, 1);
     };
     /**
      * Complete the current step and move one to the next.
@@ -176,6 +184,9 @@ var StepCtrl = (function () {
     StepCtrl.prototype.$postLink = function () {
         var index = this.stepIndex ? parseInt(this.stepIndex) : null;
         this.stepNumber = this.$stepper.$addStep(this, index);
+    };
+    StepCtrl.prototype.$onDestroy = function () {
+        this.$stepper.$removeStep(this);
     };
     StepCtrl.prototype.isActive = function () {
         var state = this.$stepper.isActiveStep(this);
