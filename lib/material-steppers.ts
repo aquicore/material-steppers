@@ -58,7 +58,6 @@ class StepperCtrl {
      * Register component step to this stepper.
      *
      * @param {StepCtrl} step The step to add.
-     * @returns number - The step number.
      */
     $addStep(step: StepCtrl, stepIndex?: number) {
         if (stepIndex) {
@@ -69,9 +68,9 @@ class StepperCtrl {
     }
 
     /**
-     * Unregister component step to this stepper.
+     * Unregister component step from this stepper.
      *
-     * @param {StepCtrl} step The step to add.
+     * @param {StepCtrl} step The step to remove.
      * @returns number - The step number.
      */
     $removeStep(step: StepCtrl) {
