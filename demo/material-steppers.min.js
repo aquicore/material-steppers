@@ -35,11 +35,13 @@ var StepperCtrl = (function () {
      * @param {StepCtrl} step The step to add.
      */
     StepperCtrl.prototype.$addStep = function (step, stepIndex) {
+        var _this = this;
         if (stepIndex) {
             this.steps.splice(stepIndex, 0, step);
             this.steps.forEach(function (s, index) {
-                this.steps[index].stepNumber = index;
+                _this.steps[index].stepNumber = index;
             });
+            return stepIndex;
         }
         else {
             return this.steps.push(step) - 1;
