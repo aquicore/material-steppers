@@ -36,5 +36,8 @@
     "gulp-typescript": "^2.13.4",
     "gulp-uglify": "^1.5.3",
     "ordered-merge-stream": "^1.0.0"
+  },
+  "dependencies": {
+    "typings": "^2.1.1"
   }
 }

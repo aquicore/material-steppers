@@ -56,20 +56,37 @@ class StepperCtrl {
 
     /**
      * Register component step to this stepper.
-     * 
+     *
      * @param {StepCtrl} step The step to add.
-     * @returns number - The step number.
      */
-    $addStep(step: StepCtrl) {
-        return this.steps.push(step) - 1;
+    $addStep(step: StepCtrl, stepIndex?: number) {
+        if (stepIndex) {
+            this.steps.splice(stepIndex, 0, step);
+            this.steps.forEach((s, index) => {
+                this.steps[index].stepNumber = index;
+            });
+            return stepIndex;
+        } else {
+            return this.steps.push(step) - 1;
+        }
     }
 
     /**
-     * Complete the current step and move one to the next. 
-     * Using this method on editable steps (in linear stepper) 
-     * it will search by the next step without "completed" state to move. 
+     * Unregister component step from this stepper.
+     *
+     * @param {StepCtrl} step The step to remove.
+     * @returns number - The step number.
+     */
+    $removeStep(step: StepCtrl) {
+        this.steps.splice(step.stepNumber, 1);
+    }
+
+    /**
+     * Complete the current step and move one to the next.
+     * Using this method on editable steps (in linear stepper)
+     * it will search by the next step without "completed" state to move.
      * When invoked it dispatch the event onstepcomplete to the step element.
-     * 
+     *
      * @returns boolean - True if move and false if not move (e.g. On the last step)
      */
     public next() {
@@ -83,9 +100,9 @@ class StepperCtrl {
     }
 
     /**
-     * Move to the previous step without change the state of current step. 
+     * Move to the previous step without change the state of current step.
      * Using this method in linear stepper it will check if previous step is editable to move.
-     * 
+     *
      * @returns boolean - True if move and false if not move (e.g. On the first step)
      */
     public back() {
@@ -99,9 +116,9 @@ class StepperCtrl {
     }
 
     /**
-     * Move to the next step without change the state of current step. 
+     * Move to the next step without change the state of current step.
      * This method works only in optional steps.
-     * 
+     *
      * @returns boolean - True if move and false if not move (e.g. On non-optional step)
      */
     public skip() {
@@ -116,9 +133,9 @@ class StepperCtrl {
 
 
     /**
-     * Defines the current step state to "error" and shows the message parameter on 
+     * Defines the current step state to "error" and shows the message parameter on
      * title message element.When invoked it dispatch the event onsteperror to the step element.
-     * 
+     *
      * @param {string} message The error message
      */
     public error(message: string) {
@@ -129,7 +146,7 @@ class StepperCtrl {
     }
 
     /**
-     * Defines the current step state to "normal" and removes the message parameter on 
+     * Defines the current step state to "normal" and removes the message parameter on
      * title message element.
      */
     public clearError() {
@@ -138,9 +155,9 @@ class StepperCtrl {
     }
 
     /**
-     * Move "active" to specified step id parameter. 
+     * Move "active" to specified step id parameter.
      * The id used as reference is the integer number shown on the label of each step (e.g. 2).
-     * 
+     *
      * @param {number} stepNumber (description)
      * @returns boolean - True if move and false if not move (e.g. On id not found)
      */
@@ -155,7 +172,7 @@ class StepperCtrl {
 
     /**
      * Shows a feedback message and a loading indicador.
-     * 
+     *
      * @param {string} [message] The feedbackMessage
      */
     public showFeedback(message?: string) {
@@ -210,6 +227,7 @@ class StepCtrl {
 
     public label: string;
     public optional: string;
+    public stepIndex: string;
 
     /* End of bindings */
 
@@ -227,7 +245,12 @@ class StepCtrl {
     ) { }
 
     $postLink() {
-        this.stepNumber = this.$stepper.$addStep(this);
+        const index = this.stepIndex ? parseInt(this.stepIndex) : null;
+        this.stepNumber = this.$stepper.$addStep(this, index);
+    }
+
+    $onDestroy() {
+        this.$stepper.$removeStep(this);
     }
 
     isActive() {
@@ -265,7 +288,8 @@ angular.module('mdSteppers', ['ngMaterial'])
             transclude: true,
             scope: {
                 label: '@mdLabel',
-                optional: '@?mdOptional'
+                optional: '@?mdOptional',
+                stepIndex: '@'
             },
             bindToController: true,
             controller: StepCtrl,
