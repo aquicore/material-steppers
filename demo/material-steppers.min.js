@@ -1,8 +1,9 @@
 var StepperCtrl = (function () {
-    function StepperCtrl($mdComponentRegistry, $attrs, $log) {
+    function StepperCtrl($mdComponentRegistry, $attrs, $log, $scope) {
         this.$mdComponentRegistry = $mdComponentRegistry;
         this.$attrs = $attrs;
         this.$log = $log;
+        this.$scope = $scope;
         this.labelStep = 'Step';
         this.labelOf = 'of';
         /* End of bindings */
@@ -69,6 +70,7 @@ var StepperCtrl = (function () {
             this.clearError();
             this.currentStep++;
             this.clearFeedback();
+            this.$scope.$emit('stepchange', this.currentStep);
             return true;
         }
         return false;
@@ -84,6 +86,7 @@ var StepperCtrl = (function () {
             this.clearError();
             this.currentStep--;
             this.clearFeedback();
+            this.$scope.$emit('stepchange', this.currentStep);
             return true;
         }
         return false;
@@ -99,6 +102,7 @@ var StepperCtrl = (function () {
         if (step.optional) {
             this.currentStep++;
             this.clearFeedback();
+            this.$scope.$emit('stepchange', this.currentStep);
             return true;
         }
         return false;
@@ -134,6 +138,7 @@ var StepperCtrl = (function () {
         if (stepNumber < this.steps.length) {
             this.currentStep = stepNumber;
             this.clearFeedback();
+            this.$scope.$emit('stepchange', this.currentStep);
             return true;
         }
         return false;
@@ -163,7 +168,8 @@ var StepperCtrl = (function () {
     StepperCtrl.$inject = [
         '$mdComponentRegistry',
         '$attrs',
-        '$log'
+        '$log',
+        '$scope'
     ];
     return StepperCtrl;
 }());
