@@ -69,6 +69,7 @@ var StepperCtrl = (function () {
             this.clearError();
             this.currentStep++;
             this.clearFeedback();
+            this.onStepLoad();
             return true;
         }
         return false;
@@ -84,6 +85,7 @@ var StepperCtrl = (function () {
             this.clearError();
             this.currentStep--;
             this.clearFeedback();
+            this.onStepLoad();
             return true;
         }
         return false;
@@ -99,6 +101,7 @@ var StepperCtrl = (function () {
         if (step.optional) {
             this.currentStep++;
             this.clearFeedback();
+            this.onStepLoad();
             return true;
         }
         return false;
@@ -134,6 +137,7 @@ var StepperCtrl = (function () {
         if (stepNumber < this.steps.length) {
             this.currentStep = stepNumber;
             this.clearFeedback();
+            this.onStepLoad();
             return true;
         }
         return false;
@@ -159,6 +163,11 @@ var StepperCtrl = (function () {
     ;
     StepperCtrl.prototype.isActiveStep = function (step) {
         return this.steps.indexOf(step) === this.currentStep;
+    };
+    StepperCtrl.prototype.onStepLoad = function () {
+        if (this.steps[this.currentStep] && this.steps[this.currentStep].onLoad) {
+            this.steps[this.currentStep].onLoad();
+        }
     };
     StepperCtrl.$inject = [
         '$mdComponentRegistry',
@@ -230,7 +239,8 @@ angular.module('mdSteppers', ['ngMaterial'])
             scope: {
                 label: '@mdLabel',
                 optional: '@?mdOptional',
-                stepIndex: '@'
+                stepIndex: '@',
+                onLoad: '&?'
             },
             bindToController: true,
             controller: StepCtrl,

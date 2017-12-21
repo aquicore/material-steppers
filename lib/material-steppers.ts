@@ -94,6 +94,7 @@ class StepperCtrl {
             this.clearError();
             this.currentStep++;
             this.clearFeedback();
+            this.onStepLoad();
             return true;
         }
         return false;
@@ -110,6 +111,7 @@ class StepperCtrl {
             this.clearError();
             this.currentStep--;
             this.clearFeedback();
+            this.onStepLoad();
             return true;
         }
         return false;
@@ -126,6 +128,7 @@ class StepperCtrl {
         if (step.optional) {
             this.currentStep++;
             this.clearFeedback();
+            this.onStepLoad();
             return true;
         }
         return false;
@@ -165,6 +168,7 @@ class StepperCtrl {
         if (stepNumber < this.steps.length) {
             this.currentStep = stepNumber;
             this.clearFeedback();
+            this.onStepLoad();
             return true;
         }
         return false;
@@ -194,6 +198,12 @@ class StepperCtrl {
 
     isActiveStep(step: StepCtrl) {
         return this.steps.indexOf(step) === this.currentStep;
+    }
+
+    private onStepLoad() {
+        if (this.steps[this.currentStep] && this.steps[this.currentStep].onLoad) {
+            this.steps[this.currentStep].onLoad();
+        }
     }
 }
 
@@ -228,6 +238,7 @@ class StepCtrl {
     public label: string;
     public optional: string;
     public stepIndex: string;
+    public onLoad: Function;
 
     /* End of bindings */
 
@@ -289,7 +300,8 @@ angular.module('mdSteppers', ['ngMaterial'])
             scope: {
                 label: '@mdLabel',
                 optional: '@?mdOptional',
-                stepIndex: '@'
+                stepIndex: '@',
+                onLoad: '&?'
             },
             bindToController: true,
             controller: StepCtrl,
